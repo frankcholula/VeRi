@@ -1,5 +1,5 @@
-.PHONY: run
-run:
+.PHONY: train
+train:
 	python main.py \
 	-s veri \
 	-t veri \
