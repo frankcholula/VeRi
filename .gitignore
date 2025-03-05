@@ -167,4 +167,4 @@ tags
 # dependencies
 /transformers
 
-datasets/*
+src/datasets/VeRi/*
