@@ -67,7 +67,7 @@ def main():
         if args.random_erase: augmentations.append("erase")
         if args.color_jitter: augmentations.append("jitter")
         if args.color_aug: augmentations.append("color")
-        aug_name = "+".join(augmentations) if augmentations else aug_name="base"
+        aug_name = "+".join(augmentations) if augmentations else "base"
         wandb.init(
             project="VeRi",
             name=f"{args.arch}_{aug_name}_{args.max_epoch}",
@@ -260,14 +260,14 @@ def train(
                     acc=accs,
                 )
             )
-            wandb.log({
-                "train/xent_loss": xent_losses.val,
-                "train/htri_loss": htri_losses.val,
-                "training/total_loss": xent_losses.val * args.lambda_xent + htri_losses.val * args.lambda_htri,
-                "train/accuracy": accs.val,
-                "train/learning_rate": optimizer.param_groups[0]["lr"],
-                }, step=(epoch * len(trainloader) + batch_idx))
-
+            if args.use_wandb:
+                wandb.log({
+                    "train/xent_loss": xent_losses.val,
+                    "train/htri_loss": htri_losses.val,
+                    "train/total_loss": xent_losses.val * args.lambda_xent + htri_losses.val * args.lambda_htri,
+                    "train/accuracy": accs.val,
+                    "train/learning_rate": optimizer.param_groups[0]["lr"],
+                    }, step=(epoch * len(trainloader) + batch_idx))
         end = time.time()
 
 
@@ -356,10 +356,10 @@ def test(
     if args.use_wandb and not return_distmat:
         wandb.log({
             "test/mAP": mAP * 100,
-            "test/rank1": cmc[0],
-            "test/rank5": cmc[4],
-            "test/rank10": cmc[9],
-            "test/rank20": cmc[19],
+            "test/rank1": cmc[0] * 100,
+            "test/rank5": cmc[4] * 100,
+            "test/rank10": cmc[9] * 100,
+            "test/rank20": cmc[19] * 100,
             })
 
     if return_distmat:
