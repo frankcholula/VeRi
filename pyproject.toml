@@ -1,20 +1,17 @@
-[project]
+[tool.poetry]
 name = "veri"
 version = "0.1.0"
 description = "EEEM071 coursework: vehicle re-identification"
-authors = [
-    {name = "Frank Lu",email = "lu.phrank@gmail.com"}
-]
-license = {text = "MIT"}
+authors = ["frankcholula <lu.phrank@gmail.com>"]
+license = "MIT"
 readme = "README.md"
-requires-python = ">=3.10"
-dependencies = [
-    "numpy (>=2.2.3,<3.0.0)",
-    "torch (>=2.6.0,<3.0.0)",
-    "torchvision (>=0.21.0,<0.22.0)"
-]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+torch = "^2.6.0"
+torchvision = "^0.21.0"
 
 
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
