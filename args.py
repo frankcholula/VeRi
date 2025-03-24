@@ -256,6 +256,14 @@ def argument_parser():
         action="store_true",
         help="use available gpus instead of specified devices (useful when using managed clusters)",
     )
+    
+    parser.add_argument(
+        "--no-wandb",
+        action="store_false",
+        dest="use_wandb",
+        help="disable Weight & Biases logging (enabled by default)",
+    )
+
     return parser
 
 
