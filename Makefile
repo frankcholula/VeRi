@@ -9,7 +9,7 @@ train_mobilenet:
 	--width 224 \
 	--optim amsgrad \
 	--lr 0.0003 \
-	--max-epoch 1 \
+	--max-epoch 10 \
 	--stepsize 20 40 \
 	--train-batch-size 64 \
 	--test-batch-size 100 \
