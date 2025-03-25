@@ -25,15 +25,11 @@ def save_checkpoint(state, save_dir, is_best=False, remove_module_from_keys=Fals
     # save
     epoch = state["epoch"]
     fpath = osp.join(save_dir, "model.pth.tar-" + str(epoch))
-    wfpath = osp.join(save_dir, "model_weights.pth.tar-" + str(epoch))
     torch.save(state, fpath)
     print(f'Checkpoint saved to "{fpath}"')
-    # added this for better visualization on W&B
-    torch.save(state["state_dict"], wfpath)
-    print(f'Weights saved to "{wfpath}"')
     if is_best:
         shutil.copy(fpath, osp.join(osp.dirname(fpath), "best_model.pth.tar"))
-        shutil.copy(wfpath, osp.join(osp.dirname(wfpath), "best_model_weights.pth.tar"))
+
 
 def resume_from_checkpoint(ckpt_path, model, optimizer=None):
     print(f'Loading checkpoint from "{ckpt_path}"')
