@@ -20,7 +20,7 @@ class WandBLogger:
             student_id = os.getenv("STUDENT_ID")
             student_name = os.getenv("STUDENT_NAME")
 
-            aug_name = self._get_aug_name(self)
+            aug_name = self._get_aug_name()
             wandb.init(
                 project="VeRi",
                 name=f"{args.arch}_{aug_name}_{args.max_epoch}",
