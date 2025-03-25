@@ -16,3 +16,8 @@ train_resnet:
 .PHONY: train_resnet_fc512
 train_resnet_fc512:
 	experiments/section1/train_resnet_fc512.sh
+
+.PHONY: clean
+clean:
+	rm -rf __pycache__
+	rm -rf logs/*
