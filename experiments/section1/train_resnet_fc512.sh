@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "==== Running ResNet50_fc512 with Default Settings ===="
+echo "==== Running ResNet18_fc512 with Default Settings ===="
 python main.py \
 -s veri \
 -t veri \
