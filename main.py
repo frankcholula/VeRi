@@ -177,9 +177,12 @@ def main():
                 },
                 args.save_dir,
             )
-            # Log model checkpoint, weights only
-            checkpoint_path = osp.join(args.save_dir, f"model-{str(epoch+1)}.pth")
+            # Log model checkpoint
+            weights_only_path = osp.join(args.save_dir, f"model-{str(epoch+1)}.pth")
+            checkpoint_path = osp.join(args.save_dir, f"model-{str(epoch+1)}.pth.tar")
+            wandb_logger.log_model_artifact(weights_only_path)
             wandb_logger.log_model_artifact(checkpoint_path)
+
 
     elapsed = round(time.time() - time_start)
     elapsed = str(datetime.timedelta(seconds=elapsed))
