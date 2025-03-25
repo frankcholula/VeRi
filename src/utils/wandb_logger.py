@@ -82,7 +82,7 @@ class WandBLogger:
             "test/rank20": cmc[19] * 100,
         }
 
-    def log_model_artifact(self, checkpoint_path, name=None, type="model"):
+    def log_model_artifact(self, checkpoint_path, name=None):
         """Log a model checkpoint as a W&B artifact"""
         if self.enabled and not self.args.evaluate:
             if name is None:
@@ -93,7 +93,7 @@ class WandBLogger:
                 except:
                     name = f"{self.args.arch}_checkpoint"
 
-            artifact = wandb.Artifact(name=name, type=type)
+            artifact = wandb.Artifact(name=name, type="model")
             artifact.add_file(checkpoint_path)
             wandb.log_artifact(artifact)
             print(f"Logged model artifact '{name}' to W&B")
