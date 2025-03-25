@@ -16,19 +16,11 @@ class WandBLogger:
 
         if self.enabled and not args.evaluate:
             load_dotenv()
-            augmentations = []
-            # by default, horizontal flips and translations are always applied
-            if args.random_erase:
-                augmentations.append("erase")
-            if args.color_jitter:
-                augmentations.append("jitter")
-            if args.color_aug:
-                augmentations.append("color")
-            aug_name = "+".join(augmentations) if augmentations else "base"
 
             student_id = os.getenv("STUDENT_ID")
             student_name = os.getenv("STUDENT_NAME")
 
+            aug_name = _get_aug_name(self)
             wandb.init(
                 project="VeRi",
                 name=f"{args.arch}_{aug_name}_{args.max_epoch}",
@@ -40,6 +32,17 @@ class WandBLogger:
             wandb.run.summary["experiment_time"] = time.strftime(
                 "%Y-%m-%d %H:%M:%S", time.localtime()
             )
+
+    def _get_aug_name(self):
+        augmentations = []
+        # by default, horizontal flips and translations are always applied
+        if self.args.random_erase:
+            augmentations.append("erase")
+        if self.args.color_jitter:
+            augmentations.append("jitter")
+        if self.args.color_aug:
+            augmentations.append("color")
+        return "+".join(augmentations) if augmentations else "base"
 
     def watch_model(self, model):
         """Watch model parameters and gradients"""
@@ -84,16 +87,12 @@ class WandBLogger:
         if self.enabled and not self.args.evaluate:
             if name is None:
                 try:
-                    epoch = checkpoint_path.split('-')[-1]
-                    augmentations = []
-                    if self.args.random_erase: augmentations.append("erase")
-                    if self.args.color_jitter: augmentations.append("jitter")
-                    if self.args.color_aug: augmentations.append("color")
-                    aug_name = "+".join(augmentations) if augmentations else "base"
+                    epoch = checkpoint_path.split("-")[-1]
+                    aug_name = self._get_aug_name()
                     name = f"{self.args.arch}_{aug_name}_e{epoch}"
                 except:
                     name = f"{self.args.arch}_checkpoint"
-                
+
             artifact = wandb.Artifact(name=name, type=type)
             artifact.add_file(checkpoint_path)
             wandb.log_artifact(artifact)
