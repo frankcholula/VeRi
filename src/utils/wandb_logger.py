@@ -89,7 +89,7 @@ class WandBLogger:
                 try:
                     epoch = checkpoint_path.split("-")[-1]
                     aug_name = self._get_aug_name()
-                    name = f"{self.args.arch}_{aug_name}_e{epoch}"
+                    name = f"{self.args.arch}_{aug_name}_{epoch}"
                 except:
                     name = f"{self.args.arch}_checkpoint"
 
