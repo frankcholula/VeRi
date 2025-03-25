@@ -9,7 +9,7 @@ BASE_PARAMS = [
     "-s","veri",
     "-t", "veri",
     "-a", BEST_MODEL,
-    "--root", "/src/datasets",
+    "--root", "src/datasets",
     "--height", "224",
     "--width", "224",
     "--optim", "amsgrad",
@@ -72,7 +72,7 @@ def run_experiment(experiment_name, dry_run=True):
     pretty_print_command(cmd, aug_name, dry_run)
 
     if not dry_run:
-        subprocess.run(cmd)
+        subprocess.run(cmd, check=True)
 
 
 def run_aug_experiments(dry_run=True):
