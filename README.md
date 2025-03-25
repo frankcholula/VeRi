@@ -33,6 +33,11 @@ make section1
 ```
 These experiments are run on my own **4080 Super FE**, with the resutls both stored locally and on [W&B](https://wandb.ai/site/).
 
+## Checklist 📝
+- [x] Section 1: Different network architectures
+- [ ] Section 2: Data augmentation
+- [ ] Section 3: Hypyerparameter tuning
+- [ ] Section 4: Summary
 
 ## License 📃
 This project is licensed under the MIT License. This means:
