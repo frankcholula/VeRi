@@ -33,7 +33,8 @@ def save_checkpoint(state, save_dir, is_best=False, remove_module_from_keys=Fals
 
 def resume_from_checkpoint(ckpt_path, model, optimizer=None):
     print(f'Loading checkpoint from "{ckpt_path}"')
-    ckpt = torch.load(ckpt_path)
+    # force to load entire Python object
+    ckpt = torch.load(ckpt_path, weights_only=False)
     model.load_state_dict(ckpt["state_dict"])
     print("Loaded model weights")
     if optimizer is not None:

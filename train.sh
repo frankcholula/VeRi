@@ -1,10 +1,10 @@
 #!/bin/bash
 
-STUDENT_ID=kn00794 STUDENT_NAME="Jane Doe" python main.py \
+python main.py \
 -s veri \
 -t veri \
 -a mobilenet_v3_small \
---root /content \
+--root /src/datasets \
 --height 224 \
 --width 224 \
 --optim amsgrad \

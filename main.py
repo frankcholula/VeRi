@@ -32,6 +32,9 @@ from src.utils.torchtools import (
 from src.utils.visualtools import visualize_ranked_results
 import uuid
 
+# weight and biases
+import wandb
+
 # global variables
 parser = argument_parser()
 args = parser.parse_args()
@@ -56,7 +59,24 @@ def main():
     print("UUID:{}".format(uuid.uuid4()))
     print("Experiment time:{}".format(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())))
     print("==========")
-    print(f"==========\nArgs:{args}\n==========")
+    print(f"==========\nArgs:{args}\n========1==")
+
+    if not args.evaluate and args.use_wandb:
+        augmentations = []
+        # by default, horizontal flips and translations are always applied
+        if args.random_erase: augmentations.append("erase")
+        if args.color_jitter: augmentations.append("jitter")
+        if args.color_aug: augmentations.append("color")
+        aug_name = "+".join(augmentations) if augmentations else "base"
+        wandb.init(
+            project="VeRi",
+            name=f"{args.arch}_{aug_name}_{args.max_epoch}",
+            config= vars(args),
+        )
+        wandb.run.summary["student_id"] = student_id
+        wandb.run.summary["student_name"] = student_name
+        wandb.run.summary["uuid"] = str(uuid.uuid4())
+        wandb.run.summary["experiment_time"] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
     if use_gpu:
         print(f"Currently using GPU {args.gpu_devices}")
@@ -82,6 +102,9 @@ def main():
         load_pretrained_weights(model, args.load_weights)
 
     model = nn.DataParallel(model).cuda() if use_gpu else model
+
+    if not args.evaluate and args.use_wandb:
+        wandb.watch(model, log="all", log_freq=100)
 
     criterion_xent = CrossEntropyLoss(
         num_classes=dm.num_train_pids, use_gpu=use_gpu, label_smooth=args.label_smooth
@@ -172,6 +195,9 @@ def main():
     elapsed = str(datetime.timedelta(seconds=elapsed))
     print(f"Elapsed {elapsed}")
     ranklogger.show_summary()
+    
+    if not args.evaluate and args.use_wandb:
+        wandb.finish()
 
 
 def train(
@@ -234,7 +260,14 @@ def train(
                     acc=accs,
                 )
             )
-
+            if args.use_wandb:
+                wandb.log({
+                    "train/xent_loss": xent_losses.val,
+                    "train/htri_loss": htri_losses.val,
+                    "train/total_loss": xent_losses.val * args.lambda_xent + htri_losses.val * args.lambda_htri,
+                    "train/accuracy": accs.val,
+                    "train/learning_rate": optimizer.param_groups[0]["lr"],
+                    }, step=(epoch * len(trainloader) + batch_idx))
         end = time.time()
 
 
@@ -319,6 +352,15 @@ def test(
     for r in ranks:
         print("Rank-{:<3}: {:.1%}".format(r, cmc[r - 1]))
     print("------------------")
+
+    if args.use_wandb and not return_distmat:
+        wandb.log({
+            "test/mAP": mAP * 100,
+            "test/rank1": cmc[0] * 100,
+            "test/rank5": cmc[4] * 100,
+            "test/rank10": cmc[9] * 100,
+            "test/rank20": cmc[19] * 100,
+            })
 
     if return_distmat:
         return distmat

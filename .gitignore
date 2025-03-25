@@ -167,4 +167,11 @@ tags
 # dependencies
 /transformers
 
+# datasets
 src/datasets/VeRi/*
+
+# sourcetrail
+VeRi.srctrlbm
+VeRi.srctrldb
+VeRi.srctrlprj
+
