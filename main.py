@@ -40,7 +40,7 @@ args = parser.parse_args()
 
 
 def main():
-    global args
+    global args, wandb_logger
 
     set_random_seed(args.seed)
     if not args.use_avai_gpus:
@@ -340,9 +340,8 @@ def test(
         print("Rank-{:<3}: {:.1%}".format(r, cmc[r - 1]))
     print("------------------")
 
-    if not return_distmat:
-        metrics = wandb_logger.format_test_metrics(mAP, cmc)
-        wandb_logger.log_test_metrics(metrics)
+    metrics = wandb_logger.format_test_metrics(mAP, cmc)
+    wandb_logger.log_test_metrics(metrics)
 
     if return_distmat:
         return distmat
