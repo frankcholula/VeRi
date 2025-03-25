@@ -178,7 +178,7 @@ def main():
                 args.save_dir,
             )
 
-            checkpoint_path = osp.join(args.save_dir, f"model.pth.tar-{epoch + 1}")
+            checkpoint_path = osp.join(args.save_dir, f"model-{str(epoch+1)}.pth.tar")
             wandb_logger.log_model_artifact(checkpoint_path)
 
     elapsed = round(time.time() - time_start)
