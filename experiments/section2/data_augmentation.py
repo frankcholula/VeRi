@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import subprocess
 import itertools
-from pathlib import Path
 
 BEST_MODEL = "resnet50_fc512"
 
