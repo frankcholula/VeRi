@@ -3,7 +3,7 @@ import subprocess
 import itertools
 
 BEST_MODEL = "resnet50_fc512"
-
+EPOCHS = 10
 BASE_PARAMS = [
     "-s","veri",
     "-t", "veri",
@@ -13,7 +13,7 @@ BASE_PARAMS = [
     "--width", "224",
     "--optim", "amsgrad",
     "--lr", "0.0003",
-    "--max-epoch", "10",
+    "--max-epoch", str(EPOCHS),
     "--stepsize", "20", "40",
     "--train-batch-size", "64",
     "--test-batch-size", "100",

@@ -23,7 +23,7 @@ class WandBLogger:
             aug_name = self._get_aug_name()
             wandb.init(
                 project="VeRi",
-                name=f"{args.arch}_{aug_name}_{args.max_epoch}",
+                name=f"{args.arch}_{aug_name}_{args.lr:.0e}_{args.max_epoch}",
                 config=vars(args),
             )
             wandb.run.summary["student_id"] = student_id
@@ -89,7 +89,7 @@ class WandBLogger:
                 try:
                     epoch = checkpoint_path.split("-")[-1]
                     aug_name = self._get_aug_name()
-                    name = f"{self.args.arch}_{aug_name}_{epoch}"
+                    name = f"{self.args.arch}_{aug_name}_{self.args.lr:.0e}_{epoch}"
                 except:
                     name = f"{self.args.arch}_checkpoint"
 
