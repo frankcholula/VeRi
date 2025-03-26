@@ -31,7 +31,7 @@ SPACING = 60
 
 def get_aug_name(augmentations):
     if augmentations:
-        return "+".join(sorted(augmentations))
+        return "-".join(sorted(augmentations))
     else:
         return "base"
 
@@ -107,4 +107,4 @@ def run_aug_experiments(dry_run=True):
 
 
 if __name__ == "__main__":
-    run_aug_experiments(dry_run=False)
+    run_aug_experiments(dry_run=True)
