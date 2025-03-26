@@ -3,7 +3,7 @@ import subprocess
 from experiments.section2.data_augmentation import BEST_MODEL, SPACING, EPOCHS, pretty_print_command
 
 BEST_AUG = "base"
-LRS = [0.0001, 0.0003, 0.001, 0.003, 0.01]
+LRS = [0.00003, 0.0001, 0.0003, 0.001, 0.003]
 
 BASE_PARAMS = [
     "-s","veri",
@@ -53,4 +53,4 @@ def run_lr_experiments(dry_run=True):
 
 
 if __name__ == "__main__":
-    run_lr_experiments(dry_run=True)
+    run_lr_experiments(dry_run=False)
