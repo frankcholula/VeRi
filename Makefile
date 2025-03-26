@@ -1,6 +1,10 @@
 .PHONY: section1
 section1: train_mobilenet train_vgg train_resnet train_resnet_fc512
 
+.PHONY: section2
+section2:
+	python experiments/section2/data_augmentation.py 
+
 PHONY: train_mobilenet
 train_mobilenet:
 	experiments/section1/train_mobilenet.sh

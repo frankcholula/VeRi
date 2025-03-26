@@ -42,7 +42,7 @@ class WandBLogger:
             augmentations.append("jitter")
         if self.args.color_aug:
             augmentations.append("color")
-        return "+".join(augmentations) if augmentations else "base"
+        return "-".join(augmentations) if augmentations else "base"
 
     def watch_model(self, model):
         """Watch model parameters and gradients"""
