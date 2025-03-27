@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import subprocess
+import argparse
 from experiments.section2.data_augmentation import BEST_MODEL, SPACING, EPOCHS, pretty_print_command
 
 BEST_AUG = "base"
@@ -53,4 +54,9 @@ def run_lr_experiments(dry_run=True):
 
 
 if __name__ == "__main__":
-    run_lr_experiments(dry_run=False)
+    parser = argparse.ArgumentParser(description="Run learning rate experiments")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print command without executing"
+    )
+    args = parser.parse_args()
+    run_lr_experiments(dry_run=args.dry_run)

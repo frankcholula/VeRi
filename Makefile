@@ -13,9 +13,13 @@ section3.1:
 section3.2:
 	python experiments/section3/batch_size_exploration.py
 
+.PHONY: section3.3
+section3.3:
+	python experiments/section3/optimizer_exploration.py
+
 PHONY: train_mobilenet
 train_mobilenet:
-	experiments/section1/train_mobilenet.sh
+	experiments/section1/train_mobilenet.shs
 
 .PHONY: train_vgg
 train_vgg:

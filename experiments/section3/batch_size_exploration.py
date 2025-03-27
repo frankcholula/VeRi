@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 import subprocess
+import argparse
 from experiments.section2.data_augmentation import BEST_MODEL, EPOCHS, SPACING, pretty_print_command
 from experiments.section3.lr_exploration import BEST_AUG
 
-BEST_AUG = "base"
 BEST_LR = 0.0001
-BATCH_SIZES = [16, 32, 64, 128, 256]
+BATCH_SIZES = [128, 96, 64, 32, 16, 8]
 
 
 BASE_PARAMS = [
@@ -23,11 +23,11 @@ BASE_PARAMS = [
 ]
 
 
-def run_experiment(batch_size, dry_run=True):
-    save_dir = f"logs/{BEST_MODEL}_{BEST_AUG}_{BEST_LR:.0e}_{batch_size}_{EPOCHS}"
+def run_experiment(train_batch_size, dry_run=True):
+    save_dir = f"logs/{BEST_MODEL}_{BEST_AUG}_{BEST_LR:.0e}_{train_batch_size}_{EPOCHS}"
     print(save_dir)
-    cmd = ["python", "main.py"] + BASE_PARAMS +  ["--test-batch-size", str(batch_size) ,"--save-dir", save_dir]
-    pretty_print_command(cmd, batch_size, dry_run=dry_run)
+    cmd = ["python", "main.py"] + BASE_PARAMS +  ["--train-batch-size", str(train_batch_size) ,"--save-dir", save_dir]
+    pretty_print_command(cmd, train_batch_size, dry_run=dry_run)
     if not dry_run:
         subprocess.run(cmd, check=True)
     return save_dir
@@ -50,11 +50,16 @@ def run_batch_size_experiments(dry_run=True):
         print("Aborted.")
         return
 
-    for batch_size in BATCH_SIZES:
-        run_experiment(batch_size, dry_run=dry_run)
+    for train_batch_size in BATCH_SIZES:
+        run_experiment(train_batch_size, dry_run=dry_run)
 
     print("This was a DRY RUN." if dry_run else "All experiments completed!")
 
 
 if __name__ == "__main__":
-    run_batch_size_experiments(dry_run=True)
+    parser = argparse.ArgumentParser(description="Run Batch Size experiments")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print command without executing"
+    )
+    args = parser.parse_args()
+    run_batch_size_experiments(dry_run=args.dry_run)
