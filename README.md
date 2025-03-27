@@ -34,6 +34,8 @@ make section1
 These experiments are run on my own **4080 Super FE**, with the resutls both stored locally and on [W&B](https://wandb.ai/site/).
 
 ## Experiment Results 📈
+The best configurations for each section are as follows:
+
 | Section     | Hyperparameter       | Best Configuration                        | mAP (%)| Rank-1 (%)|
 |-------------|----------------------|-------------------------------------------|--------|-----------|
 | Section 1   | Network architecture | resnet50_fc512                            |  54.54 |   87.01   |
@@ -41,6 +43,8 @@ These experiments are run on my own **4080 Super FE**, with the resutls both sto
 | Section 3.1 | Learning rate        | 0.0001                                    |  64.96 |   91.06   |
 | Section 3.2 | Batch size           | 64                                        |  65.85 |   91.95   |
 | Section 3.3 | Optimizer            | AMSGrad                                   |  65.85 |   91.95   |
+
+You can also find detailed results on my W&B report [here](https://api.wandb.ai/links/tsufanglu/kyjaxf8c).
 
 ## Checklist 📝
 - [x] Section 1: Different network architectures
