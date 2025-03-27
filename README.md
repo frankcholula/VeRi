@@ -37,7 +37,7 @@ These experiments are run on my own **4080 Super FE**, with the resutls both sto
 - [x] Section 1: Different network architectures
 - [x] Section 2: Data augmentation
 - [x] Section 3: Hypyerparameter tuning
-- [ ] Section 4: Summary
+- [x] Section 4: Summary
 
 ## License 📃
 This project is licensed under the MIT License. This means:
