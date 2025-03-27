@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import subprocess
 import itertools
+import argparse
 
 BEST_MODEL = "resnet50_fc512"
-
+EPOCHS = 10
 BASE_PARAMS = [
     "-s","veri",
     "-t", "veri",
@@ -13,7 +14,7 @@ BASE_PARAMS = [
     "--width", "224",
     "--optim", "amsgrad",
     "--lr", "0.0003",
-    "--max-epoch", "10",
+    "--max-epoch", str(EPOCHS),
     "--stepsize", "20", "40",
     "--train-batch-size", "64",
     "--test-batch-size", "100",
@@ -106,4 +107,9 @@ def run_aug_experiments(dry_run=True):
 
 
 if __name__ == "__main__":
-    run_aug_experiments(dry_run=True)
+    parser = argparse.ArgumentParser(description="Run data augmentation experiments")
+    parser.add_argument(
+        "--dry-run", action="store_true", help="Print command without executing"
+    )
+    args = parser.parse_args()
+    run_aug_experiments(dry_run=args.dry_run)
