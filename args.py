@@ -53,7 +53,7 @@ def argument_parser():
     # ************************************************************
     # Data augmentation
     # ************************************************************
-    parser.add_argumnet(
+    parser.add_argument(
         "--no-augmentation",
         action="store_true",
         dest="augmentation",
