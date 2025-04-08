@@ -53,6 +53,13 @@ def argument_parser():
     # ************************************************************
     # Data augmentation
     # ************************************************************
+    parser.add_argumnet(
+        "--no-augmentation",
+        action="store_true",
+        dest="augmentation",
+        help="disable data augmentation(including default)",
+    )
+
     parser.add_argument(
         "--random-erase",
         action="store_true",
@@ -256,7 +263,7 @@ def argument_parser():
         action="store_true",
         help="use available gpus instead of specified devices (useful when using managed clusters)",
     )
-    
+
     parser.add_argument(
         "--no-wandb",
         action="store_false",
