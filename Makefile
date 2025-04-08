@@ -3,7 +3,7 @@ section1: train_mobilenet train_vgg train_resnet train_resnet_fc512
 
 .PHONY: section2
 section2:
-	python experiments/section2/data_augmentation.py 
+	python experiments/section2/data_augmentation.py --dry-run
 
 .PHONY: section3.1
 section3.1:
@@ -32,6 +32,25 @@ train_resnet:
 .PHONY: train_resnet_fc512
 train_resnet_fc512:
 	experiments/section1/train_resnet_fc512.sh
+
+.PHONY: train_resnet_fc512_no-aug
+train_resnet_fc512_no-aug:
+	python main.py \
+		-s veri \
+		-t veri \
+		-a resnet50_fc512 \
+		--root src/datasets \
+		--height 224 \
+		--width 224 \
+		--optim amsgrad \
+		--lr 0.0003 \
+		--max-epoch 10 \
+		--stepsize 20 40 \
+		--train-batch-size 64 \
+		--test-batch-size 100 \
+		--no-aug \
+		--save-dir logs/resnet50_fc512_no-aug_10 \
+		--dry-run
 
 .PHONY: clean
 clean:
