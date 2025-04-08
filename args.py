@@ -54,10 +54,9 @@ def argument_parser():
     # Data augmentation
     # ************************************************************
     parser.add_argument(
-        "--no-augmentation",
+        "--no-aug",
         action="store_true",
-        dest="augmentation",
-        help="disable data augmentation(including default)",
+        help="disable data augmentation(including the default ones)",
     )
 
     parser.add_argument(

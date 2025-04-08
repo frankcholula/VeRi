@@ -48,9 +48,8 @@ train_resnet_fc512_no-aug:
 		--stepsize 20 40 \
 		--train-batch-size 64 \
 		--test-batch-size 100 \
-		--no-aug \
 		--save-dir logs/resnet50_fc512_no-aug_10 \
-		--dry-run
+		--no-aug
 
 .PHONY: clean
 clean:
