@@ -1,8 +1,6 @@
 # Copyright (c) EEEM071, University of Surrey
 
-import torch
 import torch.utils.model_zoo as model_zoo
-import torchvision
 from torch import nn
 from torch.nn import functional as F
 
@@ -14,6 +12,7 @@ __all__ = [
     "resnet34_fc512",
     "resnet50",
     "resnet50_fc512",
+    "resnet50_se_fc512",
 ]
 
 model_urls = {
@@ -136,6 +135,42 @@ class Bottleneck(nn.Module):
         out += residual
         out = self.relu(out)
 
+        return out
+
+class SEBottleneck(Bottleneck):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, reduction=16):
+        super(SEBottleneck, self).__init__(inplanes, planes, stride, downsample)
+        
+        self.se = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1),
+            nn.Conv2d(planes * 4, planes * 4 // reduction, kernel_size=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(planes * 4 // reduction, planes * 4, kernel_size=1),
+            nn.Sigmoid()
+        )
+        
+    def forward(self, x):
+        residual = x
+        
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+        
+        out = self.conv2(out)
+        out = self.bn2(out)
+        out = self.relu(out)
+        
+        out = self.conv3(out)
+        out = self.bn3(out)
+        
+        out = out * self.se(out)
+        
+        if self.downsample is not None:
+            residual = self.downsample(x)
+            
+        out += residual
+        out = self.relu(out)
+        
         return out
 
 
@@ -408,6 +443,21 @@ def resnet50_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
         num_classes=num_classes,
         loss=loss,
         block=Bottleneck,
+        layers=[3, 4, 6, 3],
+        last_stride=1,
+        fc_dims=[512],
+        dropout_p=None,
+        **kwargs,
+    )
+    if pretrained:
+        init_pretrained_weights(model, model_urls["resnet50"])
+    return model
+
+def resnet50_se_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
+    model = ResNet(
+        num_classes=num_classes,
+        loss=loss,
+        block=SEBottleneck,  # Use SEBottleneck here, not SEBasicBlock
         layers=[3, 4, 6, 3],
         last_stride=1,
         fc_dims=[512],
