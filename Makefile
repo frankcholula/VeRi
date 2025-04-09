@@ -51,6 +51,14 @@ train_resnet_fc512_no-aug:
 		--save-dir logs/resnet50_fc512_no-aug_10 \
 		--no-aug
 
+.PHONY: train_resnet18_se_fc512
+train_resnet18_se_fc512:
+	experiments/extra/train_resnet18_se_fc512.sh
+
+.PHONY: train_resnet50_se_fc512
+train_resnet50_se_fc512:
+	experiments/extra/train_resnet50_se_fc512.sh
+
 .PHONY: clean
 clean:
 	rm -rf __pycache__
