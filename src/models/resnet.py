@@ -64,7 +64,7 @@ class BasicBlock(nn.Module):
 
 
 class SEBasicBlock(BasicBlock):
-    def __init__(self, inplanes, planes, stride=1, downsample=None, reduction=16):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, reduction=8):
         super(SEBasicBlock, self).__init__(inplanes, planes, stride, downsample)
         self.se = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
