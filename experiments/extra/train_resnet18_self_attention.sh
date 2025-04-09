@@ -9,7 +9,7 @@ python main.py \
 --width 224 \
 --optim amsgrad \
 --lr 0.0003 \
---max-epoch 10 \
+--max-epoch 50 \
 --train-batch-size 64 \
 --test-batch-size 100 \
 --save-dir logs/resnet18_self_attention-veri
