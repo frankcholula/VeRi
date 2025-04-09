@@ -16,6 +16,7 @@ torch = "^2.6.0"
 torchvision = "^0.21.0"
 wandb = "^0.19.8"
 dotenv = "^0.9.9"
+numpy = "2.0.2"
 
 [build-system]
 requires = ["poetry-core"]

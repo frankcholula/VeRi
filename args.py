@@ -54,6 +54,12 @@ def argument_parser():
     # Data augmentation
     # ************************************************************
     parser.add_argument(
+        "--no-aug",
+        action="store_true",
+        help="disable data augmentation(including the default ones)",
+    )
+
+    parser.add_argument(
         "--random-erase",
         action="store_true",
         help="use random erasing for data augmentation",
@@ -256,7 +262,7 @@ def argument_parser():
         action="store_true",
         help="use available gpus instead of specified devices (useful when using managed clusters)",
     )
-    
+
     parser.add_argument(
         "--no-wandb",
         action="store_false",
@@ -286,6 +292,7 @@ def dataset_kwargs(parsed_args):
         "random_erase": parsed_args.random_erase,
         "color_jitter": parsed_args.color_jitter,
         "color_aug": parsed_args.color_aug,
+        "no_aug": parsed_args.no_aug,
     }
 
 
