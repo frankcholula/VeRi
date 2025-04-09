@@ -6,11 +6,13 @@ from torch.nn import functional as F
 
 __all__ = [
     "resnet18",
+    "resnet18_se",
     "resnet18_fc512",
     "resnet18_se_fc512",
     "resnet34",
     "resnet34_fc512",
     "resnet50",
+    "resnet50_se",
     "resnet50_fc512",
     "resnet50_se_fc512",
 ]
@@ -64,7 +66,7 @@ class BasicBlock(nn.Module):
 
 
 class SEBasicBlock(BasicBlock):
-    def __init__(self, inplanes, planes, stride=1, downsample=None, reduction=8):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, reduction=16):
         super(SEBasicBlock, self).__init__(inplanes, planes, stride, downsample)
         self.se = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
@@ -357,6 +359,20 @@ def resnet18(num_classes, loss={"xent"}, pretrained=True, **kwargs):
         init_pretrained_weights(model, model_urls["resnet18"])
     return model
 
+def resnet18_se(num_classes, loss={"xent"}, pretrained=True, **kwargs):
+    model = ResNet(
+        num_classes=num_classes,
+        loss=loss,
+        block=SEBasicBlock,
+        layers=[2, 2, 2, 2],
+        last_stride=2,
+        fc_dims=None,
+        dropout_p=None,
+        **kwargs,
+    )
+    if pretrained:
+        init_pretrained_weights(model, model_urls["resnet18"])
+    return model
 
 def resnet18_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
@@ -437,6 +453,20 @@ def resnet50(num_classes, loss={"xent"}, pretrained=True, **kwargs):
         init_pretrained_weights(model, model_urls["resnet50"])
     return model
 
+def resnet50_se(num_classes, loss={"xent"}, pretrained=True, **kwargs):
+    model = ResNet(
+        num_classes=num_classes,
+        loss=loss,
+        block=SEBottleneck,
+        layers=[3, 4, 6, 3],
+        last_stride=2,
+        fc_dims=None,
+        dropout_p=None,
+        **kwargs,
+    )
+    if pretrained:
+        init_pretrained_weights(model, model_urls["resnet50"])
+    return model
 
 def resnet50_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
