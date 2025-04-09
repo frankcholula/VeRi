@@ -526,7 +526,7 @@ class SelfAttention(nn.Module):
     https://arxiv.org/abs/1711.07971
     """
 
-    def __init__(self, in_channels, reduction_ratio=8):
+    def __init__(self, in_channels, reduction_ratio=16):
         super(SelfAttention, self).__init__()
 
         # Reduce channels for computation efficiency
