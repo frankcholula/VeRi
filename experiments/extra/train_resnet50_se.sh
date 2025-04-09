@@ -2,7 +2,7 @@ echo "==== Running ResNet50_se with Default Settings ===="
 python main.py \
 -s veri \
 -t veri \
--a resnet50_se\
+-a resnet50_se \
 --root src/datasets/ \
 --height 224 \
 --width 224 \
