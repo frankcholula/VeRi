@@ -9,6 +9,7 @@ from torch.nn import functional as F
 __all__ = [
     "resnet18",
     "resnet18_fc512",
+    "resnet18_se_fc512",
     "resnet34",
     "resnet34_fc512",
     "resnet50",
@@ -60,6 +61,39 @@ class BasicBlock(nn.Module):
         out += residual
         out = self.relu(out)
 
+        return out
+
+
+class SEBasicBlock(BasicBlock):
+    def __init__(self, inplanes, planes, stride=1, downsample=None, reduction=16):
+        super(SEBasicBlock, self).__init__(inplanes, planes, stride, downsample)
+        self.se = nn.Sequential(
+            nn.AdaptiveAvgPool2d(1),
+            nn.Conv2d(planes, planes // reduction, kernel_size=1),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(planes // reduction, planes, kernel_size=1),
+            nn.Sigmoid(),
+        )
+
+    def forward(self, x):
+        residual = x
+        
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+        
+        out = self.conv2(out)
+        out = self.bn2(out)
+        
+        # Apply SE attention
+        out = out * self.se(out)
+        
+        if self.downsample is not None:
+            residual = self.downsample(x)
+            
+        out += residual
+        out = self.relu(out)
+        
         return out
 
 
@@ -294,6 +328,22 @@ def resnet18_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
         num_classes=num_classes,
         loss=loss,
         block=BasicBlock,
+        layers=[2, 2, 2, 2],
+        last_stride=1,
+        fc_dims=[512],
+        dropout_p=None,
+        **kwargs,
+    )
+    if pretrained:
+        init_pretrained_weights(model, model_urls["resnet18"])
+    return model
+
+
+def resnet18_se_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
+    model = ResNet(
+        num_classes=num_classes,
+        loss=loss,
+        block=SEBasicBlock,
         layers=[2, 2, 2, 2],
         last_stride=1,
         fc_dims=[512],

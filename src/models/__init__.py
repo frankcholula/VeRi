@@ -3,6 +3,7 @@
 from .resnet import (
     resnet18,
     resnet18_fc512,
+    resnet18_se_fc512,
     resnet34,
     resnet34_fc512,
     resnet50,
@@ -15,6 +16,7 @@ __model_factory = {
     # image classification models
     "resnet18": resnet18,
     "resnet18_fc512": resnet18_fc512,
+    "resnet18_se_fc512": resnet18_se_fc512,
     "resnet34": resnet34,
     "resnet34_fc512": resnet34_fc512,
     "resnet50": resnet50,
