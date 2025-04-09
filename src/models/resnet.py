@@ -143,9 +143,9 @@ class SEBottleneck(Bottleneck):
         
         self.se = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
-            nn.Conv2d(planes * 4, planes * 4 // reduction, kernel_size=1),
+            nn.Conv2d(planes * self.expansion, planes * self.expansion // reduction, kernel_size=1),
             nn.ReLU(inplace=True),
-            nn.Conv2d(planes * 4 // reduction, planes * 4, kernel_size=1),
+            nn.Conv2d(planes * self.expansion // reduction, planes * self.expansion, kernel_size=1),
             nn.Sigmoid()
         )
         
@@ -457,7 +457,7 @@ def resnet50_se_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
         num_classes=num_classes,
         loss=loss,
-        block=SEBottleneck,  # Use SEBottleneck here, not SEBasicBlock
+        block=SEBottleneck,
         layers=[3, 4, 6, 3],
         last_stride=1,
         fc_dims=[512],
