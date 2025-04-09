@@ -7,7 +7,7 @@ python main.py \
 --height 224 \
 --width 224 \
 --optim amsgrad \
---lr 0.0001 \
+--lr 0.0003 \
 --max-epoch 10 \
 --stepsize 20 40 \
 --train-batch-size 64 \
