@@ -3,10 +3,12 @@
 import torch.utils.model_zoo as model_zoo
 from torch import nn
 from torch.nn import functional as F
+import torch
 
 __all__ = [
     "resnet18",
     "resnet18_se",
+    "resnet18_self_attention",
     "resnet18_fc512",
     "resnet18_se_fc512",
     "resnet34",
@@ -78,23 +80,23 @@ class SEBasicBlock(BasicBlock):
 
     def forward(self, x):
         residual = x
-        
+
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-        
+
         out = self.conv2(out)
         out = self.bn2(out)
-        
+
         # Apply SE attention
         out = out * self.se(out)
-        
+
         if self.downsample is not None:
             residual = self.downsample(x)
-            
+
         out += residual
         out = self.relu(out)
-        
+
         return out
 
 
@@ -139,40 +141,49 @@ class Bottleneck(nn.Module):
 
         return out
 
+
 class SEBottleneck(Bottleneck):
     def __init__(self, inplanes, planes, stride=1, downsample=None, reduction=16):
         super(SEBottleneck, self).__init__(inplanes, planes, stride, downsample)
-        
+
         self.se = nn.Sequential(
             nn.AdaptiveAvgPool2d(1),
-            nn.Conv2d(planes * self.expansion, planes * self.expansion // reduction, kernel_size=1),
+            nn.Conv2d(
+                planes * self.expansion,
+                planes * self.expansion // reduction,
+                kernel_size=1,
+            ),
             nn.ReLU(inplace=True),
-            nn.Conv2d(planes * self.expansion // reduction, planes * self.expansion, kernel_size=1),
-            nn.Sigmoid()
+            nn.Conv2d(
+                planes * self.expansion // reduction,
+                planes * self.expansion,
+                kernel_size=1,
+            ),
+            nn.Sigmoid(),
         )
-        
+
     def forward(self, x):
         residual = x
-        
+
         out = self.conv1(x)
         out = self.bn1(out)
         out = self.relu(out)
-        
+
         out = self.conv2(out)
         out = self.bn2(out)
         out = self.relu(out)
-        
+
         out = self.conv3(out)
         out = self.bn3(out)
-        
+
         out = out * self.se(out)
-        
+
         if self.downsample is not None:
             residual = self.downsample(x)
-            
+
         out += residual
         out = self.relu(out)
-        
+
         return out
 
 
@@ -359,6 +370,7 @@ def resnet18(num_classes, loss={"xent"}, pretrained=True, **kwargs):
         init_pretrained_weights(model, model_urls["resnet18"])
     return model
 
+
 def resnet18_se(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
         num_classes=num_classes,
@@ -373,6 +385,7 @@ def resnet18_se(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     if pretrained:
         init_pretrained_weights(model, model_urls["resnet18"])
     return model
+
 
 def resnet18_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
@@ -453,6 +466,7 @@ def resnet50(num_classes, loss={"xent"}, pretrained=True, **kwargs):
         init_pretrained_weights(model, model_urls["resnet50"])
     return model
 
+
 def resnet50_se(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
         num_classes=num_classes,
@@ -467,6 +481,7 @@ def resnet50_se(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     if pretrained:
         init_pretrained_weights(model, model_urls["resnet50"])
     return model
+
 
 def resnet50_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
@@ -483,6 +498,7 @@ def resnet50_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
         init_pretrained_weights(model, model_urls["resnet50"])
     return model
 
+
 def resnet50_se_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = ResNet(
         num_classes=num_classes,
@@ -496,4 +512,134 @@ def resnet50_se_fc512(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     )
     if pretrained:
         init_pretrained_weights(model, model_urls["resnet50"])
+    return model
+
+
+### Self-Attention
+
+
+class SelfAttention(nn.Module):
+    """
+    Self attention module for ResNet
+
+    Implementation inspired by Non-Local Neural Networks (Wang et al.)
+    https://arxiv.org/abs/1711.07971
+    """
+
+    def __init__(self, in_channels, reduction_ratio=8):
+        super(SelfAttention, self).__init__()
+
+        # Reduce channels for computation efficiency
+        self.reduced_channels = in_channels // reduction_ratio
+
+        # Query, Key, Value projections
+        self.query_conv = nn.Conv2d(in_channels, self.reduced_channels, kernel_size=1)
+        self.key_conv = nn.Conv2d(in_channels, self.reduced_channels, kernel_size=1)
+        self.value_conv = nn.Conv2d(in_channels, in_channels, kernel_size=1)
+
+        # Output projection (can be used to further refine features)
+        self.output_conv = nn.Conv2d(in_channels, in_channels, kernel_size=1)
+
+        # Gamma is a learnable parameter that controls how much attention to apply
+        # Initialize to 0 so at the beginning the network relies on local features
+        self.gamma = nn.Parameter(torch.zeros(1))
+
+        self._init_weights()
+
+    def _init_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+
+    def forward(self, x):
+        batch_size, channels, height, width = x.size()
+
+        # Project to get query, key, value
+        query = (
+            self.query_conv(x).view(batch_size, -1, height * width).permute(0, 2, 1)
+        )  # B x (H*W) x C'
+        key = self.key_conv(x).view(batch_size, -1, height * width)  # B x C' x (H*W)
+        value = self.value_conv(x).view(batch_size, -1, height * width)  # B x C x (H*W)
+
+        # Calculate attention map
+        attention = torch.bmm(query, key)  # B x (H*W) x (H*W)
+        attention = F.softmax(attention, dim=-1)  # Softmax along the last dimension
+
+        # Apply attention to value
+        out = torch.bmm(value, attention.permute(0, 2, 1))  # B x C x (H*W)
+        out = out.view(batch_size, channels, height, width)  # B x C x H x W
+
+        # Output projection
+        out = self.output_conv(out)
+
+        # Apply learnable weight gamma and add residual connection
+        return self.gamma * out + x  # gamma controls the influence of the attention
+
+
+class SelfAttentionBasicBlock(nn.Module):
+    """
+    ResNet Basic Block with Self Attention
+    """
+
+    expansion = 1
+
+    def __init__(self, inplanes, planes, stride=1, downsample=None):
+        super(SelfAttentionBasicBlock, self).__init__()
+        # Standard ResNet BasicBlock components
+        self.conv1 = nn.Conv2d(
+            inplanes, planes, kernel_size=3, stride=stride, padding=1, bias=False
+        )
+        self.bn1 = nn.BatchNorm2d(planes)
+        self.relu = nn.ReLU(inplace=True)
+        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(planes)
+        self.downsample = downsample
+        self.stride = stride
+
+        # Add self-attention module after the second convolution
+        self.self_attention = SelfAttention(planes)
+
+    def forward(self, x):
+        residual = x
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+
+        # Apply self-attention
+        out = self.self_attention(out)
+
+        if self.downsample is not None:
+            residual = self.downsample(x)
+
+        out += residual
+        out = self.relu(out)
+
+        return out
+
+
+def resnet18_self_attention(num_classes, loss={"xent"}, pretrained=True, **kwargs):
+    """
+    Create ResNet-18 model with self-attention blocks
+    """
+    model = ResNet(
+        num_classes=num_classes,
+        loss=loss,
+        block=SelfAttentionBasicBlock,
+        layers=[2, 2, 2, 2],
+        last_stride=2,
+        fc_dims=None,
+        dropout_p=None,
+        **kwargs,
+    )
+
+    if pretrained:
+        # Load pretrained ResNet-18 weights
+        init_pretrained_weights(model, model_urls["resnet18"])
+
     return model
