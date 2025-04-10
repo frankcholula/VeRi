@@ -129,6 +129,7 @@ def build_transforms(
     random_erase=False,  # use random erasing for data augmentation
     color_jitter=False,  # randomly change the brightness, contrast and saturation
     color_aug=False,  # randomly alter the intensities of RGB channels
+    random_perspective=False,  # randomly change the perspective of the image
     no_aug=False,  # disable all augmentations
     **kwargs
 ):
@@ -156,6 +157,8 @@ def build_transforms(
     transform_train += [normalize]
     if not no_aug and random_erase:
         transform_train += [RandomErasing()]
+    if not no_aug and random_perspective:
+        transform_train += [T.RandomPerspective(distortion_scale=0.5, p=0.5)]
     transform_train = T.Compose(transform_train)
 
     # build test transformations
