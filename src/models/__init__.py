@@ -1,5 +1,7 @@
 # Copyright (c) EEEM071, University of Surrey
 
+
+from .self_attention import resnet18_self_attention
 from .resnet import (
     resnet18,
     resnet18_se,
