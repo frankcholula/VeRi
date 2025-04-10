@@ -7,22 +7,35 @@ Hello! This is a coursework repository for **EEEM071: Advanced Topics in Compute
 If you are a **University of Surrey student**, you are welcome to use this project as a learning resource and reference for your coursework. A simple credit to the OC (wee! that's me, [Frank](https://frankcholula.notion.site/)) would be greatly appreciated. However, please note that submitting this work as your own academic assignment is not permitted and may lead to [academic misconduct penalties](https://www.surrey.ac.uk/office-student-complaints-appeals-and-regulation/academic-misconduct-and-appeals). Just make sure you're submitting your orignal work.
 
 
-## Code Structure 🌳
+## Directory Structure 🌳
 ```
 VeRi
 ├── Makefile
 ├── README.md
-├── __pycache__
 ├── args.py
+├── assets
 ├── docs
 ├── experiments
-├── logs
+│   ├── extra
+│   ├── section1
+│   ├── section2
+│   └── section3
 ├── main.py
 ├── poetry.lock
 ├── pyproject.toml
 ├── src
-├── train.sh
-└── wandb
+│   ├── data_manager.py
+│   ├── dataset_loader.py
+│   ├── datasets
+│   ├── eval_metrics.py
+│   ├── losses
+│   ├── lr_schedulers.py
+│   ├── models
+│   ├── optimizers.py
+│   ├── samplers.py
+│   ├── transforms.py
+│   └── utils
+└── train.sh
 ```
 All relevant papers are stored in the `docs` directory. A sample training script is provided in `train.sh`.  I'm also using `sourcetrail` to visualize the code structure. It's been discontinued but still works fine. You can download it [here](https://github.com/CoatiSoftware/Sourcetrail).
 
