@@ -6,6 +6,34 @@ Hello! This is a coursework repository for **EEEM071: Advanced Topics in Compute
 
 If you are a **University of Surrey student**, you are welcome to use this project as a learning resource and reference for your coursework. A simple credit to the OC (wee! that's me, [Frank](https://frankcholula.notion.site/)) would be greatly appreciated. However, please note that submitting this work as your own academic assignment is not permitted and may lead to [academic misconduct penalties](https://www.surrey.ac.uk/office-student-complaints-appeals-and-regulation/academic-misconduct-and-appeals). Just make sure you're submitting your orignal work.
 
+## Code Overview 🧑‍💻
+```mermaid
+flowchart LR
+    A[Data Loading] --> B[Model Setup]
+    B --> C[Training]
+    C --> D[Evaluation]
+    
+    subgraph A[Data Loading]
+        A1[src.datasets.veri] --data augmentation--> A2[src.transforms]
+        A2 --create train, test dataloaders--> A3["src.data_manager.return_dataloaders()"]
+    end
+    
+    subgraph B[Model Setup]
+        B1["src.models.init_model()"] --setup xent and htri losses--> B2[src.losses]
+        B2 --configure optimizer and scheduler --> B3[src.optimizers + src.lr_schedulers]
+    end
+    
+    subgraph C[Training]
+        C1["optimizer.step()"] --calculate losses--> C2[xent_loss + htri_losss]
+        C2 --backpropagation--> C3["loss.backward()"]
+        C3 --forward pass --> C1
+    end
+    
+    subgraph D[Evaluation]
+        D1["qf, q_pids, q_cam_ids, gf, g_pids, g_cam_ids"] --calculate distance matrix--> D2[distmat]
+        D2 --Compute cmc and mAP--> D3["evaluate(distmat, q_pids, g_pids, q_camids, g_camids)"]
+    end
+```
 
 ## Directory Structure 🌳
 ```
