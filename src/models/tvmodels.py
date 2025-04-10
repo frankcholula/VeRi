@@ -4,7 +4,7 @@ import torch.nn as nn
 import torchvision.models as tvmodels
 
 
-__all__ = ["mobilenet_v3_small", "vgg16"]
+__all__ = ["mobilenet_v3_small", "vgg16", "vit_b_16"]
 
 
 class TorchVisionModel(nn.Module):
@@ -13,11 +13,16 @@ class TorchVisionModel(nn.Module):
 
         self.loss = loss
         self.backbone = tvmodels.__dict__[name](pretrained=pretrained)
-        self.feature_dim = self.backbone.classifier[0].in_features
 
-        # overwrite the classifier used for ImageNet pretrianing
-        # nn.Identity() will do nothing, it's just a place-holder
-        self.backbone.classifier = nn.Identity()
+        if name.startswith("vit"):
+            self.feature_dim = self.backbone.heads.head.in_features
+            self.backbone.heads.head = nn.Identity()
+        else:
+            self.feature_dim = self.backbone.classifier[0].in_features
+
+            # overwrite the classifier used for ImageNet pretrianing
+            # nn.Identity() will do nothing, it's just a place-holder
+            self.backbone.classifier = nn.Identity()
         self.classifier = nn.Linear(self.feature_dim, num_classes)
 
     def forward(self, x):
@@ -50,6 +55,17 @@ def vgg16(num_classes, loss={"xent"}, pretrained=True, **kwargs):
 def mobilenet_v3_small(num_classes, loss={"xent"}, pretrained=True, **kwargs):
     model = TorchVisionModel(
         "mobilenet_v3_small",
+        num_classes=num_classes,
+        loss=loss,
+        pretrained=pretrained,
+        **kwargs,
+    )
+    return model
+
+
+def vit_b_16(num_classes, loss={"xent"}, pretrained=True, **kwargs):
+    model = TorchVisionModel(
+        "vit_b_16",
         num_classes=num_classes,
         loss=loss,
         pretrained=pretrained,
