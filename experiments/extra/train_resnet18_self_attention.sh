@@ -1,4 +1,4 @@
-echo "==== Running ResNet50 (Self-Attention) with Default Settings ===="
+echo "==== Running ResNet50 (Self-Attention) ===="
 
 python main.py \
 -s veri \
@@ -8,7 +8,7 @@ python main.py \
 --height 224 \
 --width 224 \
 --optim amsgrad \
---lr 0.0003 \
+--lr 0.0001 \
 --max-epoch 50 \
 --train-batch-size 64 \
 --test-batch-size 100 \
