@@ -1,4 +1,4 @@
-from resnet import ResNet, BasicBlock, Bottleneck, init_pretrained_weights, model_urls
+from src.models.resnet import ResNet, BasicBlock, Bottleneck, init_pretrained_weights, model_urls
 from torch import nn
 
 

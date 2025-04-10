@@ -74,6 +74,11 @@ def argument_parser():
         action="store_true",
         help="randomly alter the intensities of RGB channels",
     )
+    parser.add_argument(
+        "--random-perspective",
+        action="store_true",
+        help="randomly change the perspective of the image",
+    )
 
     # ************************************************************
     # Optimization options
@@ -292,6 +297,7 @@ def dataset_kwargs(parsed_args):
         "random_erase": parsed_args.random_erase,
         "color_jitter": parsed_args.color_jitter,
         "color_aug": parsed_args.color_aug,
+        "random_perspective": parsed_args.random_perspective,
         "no_aug": parsed_args.no_aug,
     }
 

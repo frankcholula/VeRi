@@ -1,6 +1,7 @@
 import torch
 from torch import nn
-from resnet import ResNet, init_pretrained_weights, model_urls
+
+from src.models.resnet import ResNet, init_pretrained_weights, model_urls
 from torch.nn import functional as F
 
 
