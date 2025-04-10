@@ -16,7 +16,7 @@ from .resnet import (
     resnet50,
     resnet50_fc512,
 )
-from .tvmodels import mobilenet_v3_small, vgg16
+from .tvmodels import mobilenet_v3_small, vgg16, vit_b_16
 
 
 __model_factory = {
@@ -35,6 +35,7 @@ __model_factory = {
     "resnet18_self_attention": resnet18_self_attention,
     "resnet50_se": resnet50_se,
     "resnet50_se_fc512": resnet50_se_fc512,
+    "vit_b_16": vit_b_16,
 }
 
 
