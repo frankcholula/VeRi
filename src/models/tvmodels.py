@@ -15,8 +15,8 @@ class TorchVisionModel(nn.Module):
         self.backbone = tvmodels.__dict__[name](pretrained=pretrained)
 
         if name.startswith("vit"):
-            self.feature_dim = self.backbone.heads.head.in_features
-            # self.feature_dim = self.backbone.hidden_dim 
+            # technically the right way 
+            self.feature_dim = self.backbone.hidden_dim
             self.backbone.heads.head = nn.Identity()
         else:
             self.feature_dim = self.backbone.classifier[0].in_features
