@@ -13,4 +13,4 @@ python main.py \
 --train-batch-size 64 \
 --test-batch-size 100 \
 --random-perspective \
---save-dir logs/resnet18_se_fc512-veri
+--save-dir logs/resnet18_fc512_random_perspective-veri
