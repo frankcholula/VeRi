@@ -2,7 +2,7 @@ echo "==== Trying Random Perspective with Default Settings ===="
 python main.py \
 -s veri \
 -t veri \
--a resnet18_fc512 \
+-a resnet50_fc512 \
 --root src/datasets/ \
 --height 224 \
 --width 224 \
@@ -13,4 +13,4 @@ python main.py \
 --train-batch-size 64 \
 --test-batch-size 100 \
 --random-perspective \
---save-dir logs/resnet18_fc512_random_perspective-veri
+--save-dir logs/resnet50_fc512_random_perspective-veri
