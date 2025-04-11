@@ -74,8 +74,10 @@ make section1
 ```
 These experiments are run on my own **4080 Super FE**, with the resutls both stored locally and on [W&B](https://wandb.ai/site/).
 
+
 ## Experiment Results 📈
-The best configurations for each section are as follows:
+All experiment results are stored on this [W&B](https://wandb.ai/tsufanglu/VeRi?nw=nwusertsufanglu) workspace.
+The summary of the best configurations for each section is as follows:
 
 | Section     | Hyperparameter       | Best Configuration                        | mAP (%)| Rank-1 (%)|
 |-------------|----------------------|-------------------------------------------|--------|-----------|
