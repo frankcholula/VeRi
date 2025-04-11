@@ -82,7 +82,7 @@ The summary of the best configurations for each section is as follows:
 | Section     | Hyperparameter       | Best Configuration                        | mAP (%)| Rank-1 (%)|
 |-------------|----------------------|-------------------------------------------|--------|-----------|
 | Section 1   | Network architecture | resnet50_fc512                            |  54.54 |   87.01   |
-| Section 2   | Data augmentation    | Random2DTransation + RandomHorizontalFlip |  54.54 |   87.01   |
+| Section 2   | Data augmentation    | Default + Random Perspective              |  54.61 |   87.07   |
 | Section 3.1 | Learning rate        | 0.0001                                    |  64.96 |   91.06   |
 | Section 3.2 | Batch size           | 64                                        |  65.85 |   91.95   |
 | Section 3.3 | Optimizer            | AMSGrad                                   |  65.85 |   91.95   |
